@@ -434,10 +434,10 @@ def api(method, path, body=None, raw=False):
                [{"proto": "ipv4", "destination": IFACES[k][2].replace(".1/", ".0/"), "gateway": "link#%d" % i, "flags": "U", "netif": IFACES[k][1], "mtu": "1500",
                  "intf_description": IFACES[k][0]} for i, k in enumerate(INTERNAL)]
     if base == "routing/settings/search_gateway":
-        return {"rows": [{"uuid": uid("gw/wan"), "name": "WAN_DHCP", "interface": "wan", "interface_descr": "WAN", "ipprotocol": "inet", "gateway": WAN_GW, "defaultgw": "1",
-                          "monitor": WAN_GW, "disabled": "0", "priority": "254", "descr": "Passerelle du fournisseur d'accès", "dynamic": True},
+        return {"rows": [{"uuid": uid("gw/wan"), "name": "WAN_DHCP", "interface": "wan", "interface_descr": "WAN", "ipprotocol": "inet", "gateway": WAN_GW, "defaultgw": True,
+                          "monitor": WAN_GW, "monitor_disable": "0", "disabled": False, "priority": 254, "descr": "Passerelle du fournisseur d'accès", "dynamic": True},
                          {"uuid": uid("gw/vpn"), "name": "SITE_B", "interface": "opt2", "interface_descr": "SERVEURS", "ipprotocol": "inet", "gateway": "192.168.20.2",
-                          "defaultgw": "0", "monitor": "", "disabled": "0", "priority": "255", "descr": "Routeur VPN vers l'agence"}], "total": 2}
+                          "defaultgw": False, "monitor_disable": "1", "disabled": False, "priority": 255, "descr": "Routeur VPN vers l'agence"}], "total": 2}
     if base == "routes/routes/searchroute":
         return {"rows": [{"uuid": uid("route/agence"), "network": "10.20.0.0/16", "gateway": "SITE_B - 192.168.20.2", "descr": "Réseau de l'agence (VPN)", "disabled": "0"}], "total": 1}
     if base == "routes/gateway/status":

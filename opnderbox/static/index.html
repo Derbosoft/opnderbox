@@ -4072,12 +4072,13 @@ $("#lsRefresh").onclick = () => loadDhcp().catch(e => e.message !== "session" &&
 /* ---------------------------------------------------------------- configuration : routage (lecture) */
 const RC = { data: null, tab: "rt" };
 async function loadRouteCfg() { RC.data = await api("/api/routes"); renderRouteCfg(); }
-const offOf = r => r.disabled === "1" || r.enabled === "0";
+const yes = x => x === true || x === "1" || x === 1;   // l'API d'OPNsense rend des booléens ou des "1" selon les écrans
+const offOf = r => yes(r.disabled) || r.enabled === "0" || r.enabled === false;
 function renderRouteCfg() {
   const d = RC.data; if (!d || !S) return;
   document.querySelectorAll("#rcTabs [data-rc]").forEach(b => b.classList.toggle("on", b.dataset.rc === RC.tab));
   document.querySelectorAll("#v-routecfg [data-rcv]").forEach(x => x.hidden = x.dataset.rcv !== RC.tab);
-  const gws = isErr(d.gateways) ? [] : d.gateways.rows || [], defs = gws.filter(g => g.defaultgw === "1" && !offOf(g));
+  const gws = isErr(d.gateways) ? [] : d.gateways.rows || [], defs = gws.filter(g => yes(g.defaultgw) && !offOf(g));
   const gwIf = g => S.interfaces[g.interface] ? ifPillKey(g.interface) : esc(g.interface_descr || g.interface || "");
   $("#rcGeneral").innerHTML = fset("Configuration générale", frow("Passerelle par défaut (routeur)", isErr(d.gateways) ? errBox(d.gateways)
     : defs.length ? defs.map(g => `<b>${esc(g.name)}</b> <span class="mono sub">${esc(g.gateway || "dynamique")}</span>`).join("<br>") : '<span class="sub">aucune</span>'));
@@ -4088,7 +4089,7 @@ function renderRouteCfg() {
       || '<tr><td colspan="4" class="note">Aucune route statique.</td></tr>';
   $("#gcBody").innerHTML = isErr(d.gateways) ? `<tr><td colspan="8">${errBox(d.gateways)}</td></tr>` : gws.map(g => `<tr class="rule${offOf(g) ? " off" : ""}">
     <td>${offOf(g) ? '<span class="tag">inactive</span>' : '<span class="badge ok">active</span>'}</td><td><b>${esc(g.name)}</b></td><td>${gwIf(g)}</td>
-    <td class="mono">${esc(g.gateway || "dynamique")}</td><td>${g.defaultgw === "1" ? "oui" : ""}</td><td class="mono sub">${esc(g.monitor || (g.monitor_disable === "1" ? "désactivée" : ""))}</td>
+    <td class="mono">${esc(g.gateway || "dynamique")}</td><td>${yes(g.defaultgw) ? "oui" : ""}</td><td class="mono sub">${esc(yes(g.monitor_disable) ? "désactivée" : g.monitor || "passerelle")}</td>
     <td class="rate">${esc(g.priority || "")}</td><td>${esc(g.descr || "")}</td></tr>`).join("") || '<tr><td colspan="8" class="note">Aucune passerelle.</td></tr>';
 }
 $("#rcTabs").onclick = e => { const b = e.target.closest("[data-rc]"); if (b) { RC.tab = b.dataset.rc; renderRouteCfg(); } };

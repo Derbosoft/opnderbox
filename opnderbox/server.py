@@ -976,7 +976,10 @@ def syslog(source, limit, query=""):
     res = safe("POST", f"diagnostics/log/core/{SYSLOG_SCOPES[source]}", {"current": 1, "rowCount": limit, "searchPhrase": query})
     if "_error" in res:
         return res
-    return {"total": res.get("total", 0), "rows": [{k: r.get(k, "") for k in SYSLOG_FIELDS} for r in res.get("rows", [])]}
+    rows = [{k: r.get(k, "") for k in SYSLOG_FIELDS} for r in res.get("rows", [])]
+    for r in rows:
+        r["line"] = str(r["line"]).strip()
+    return {"total": res.get("total", 0), "rows": rows}
 
 
 # lignes de configuration a ne jamais montrer, meme hachees (mots de passe, cles)
