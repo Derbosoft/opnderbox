@@ -130,7 +130,8 @@ def tls_connect(base_url, timeout=60):
         conn.connect()
     except (OSError, ssl.SSLError) as e:
         conn.close()
-        raise ApiError(f"OPNsense injoignable ({url.hostname}:{url.port or 443}) : {e}")
+        reason = str(e) or ("delai depasse : un pare-feu filtre-t-il l'acces a son interface ?" if isinstance(e, TimeoutError) else type(e).__name__)
+        raise ApiError(f"OPNsense injoignable ({url.hostname}:{url.port or 443}) : {reason}")
     return conn
 
 
@@ -1923,7 +1924,9 @@ def local_address():
 
 
 def setup_url(port):
-    return f"https://{local_address()}{'' if port == 443 else ':' + str(port)}/#setup={setup_token()}"
+    # dans un conteneur, l'adresse locale est celle du reseau Docker, pas celle que joint le navigateur
+    host = "adresse-de-la-machine-docker" if Path("/.dockerenv").exists() else local_address()
+    return f"https://{host}{'' if port == 443 else ':' + str(port)}/#setup={setup_token()}"
 
 
 def main():

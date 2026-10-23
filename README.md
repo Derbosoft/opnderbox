@@ -69,10 +69,10 @@ L'installateur crée le compte de service `opnderbox`, le service systemd et la 
 
 ```sh
 docker compose up -d
-docker compose logs opnderbox     # ligne « Premiere configuration : https://…:8443/#setup=… »
+docker compose logs opnderbox     # ligne « Premiere configuration : https://adresse-de-la-machine-docker:8443/#setup=… »
 ```
 
-Remplacez l'adresse affichée par celle de la machine qui fait tourner Docker. La configuration et l'historique sont gardés dans deux volumes.
+Remplacez `adresse-de-la-machine-docker` par l'adresse de la machine qui fait tourner Docker. Cette machine doit pouvoir joindre l'interface web d'OPNsense (souvent réservée à un réseau d'administration). La configuration et l'historique sont gardés dans deux volumes.
 
 ## Relier OPNderbox à OPNsense
 
