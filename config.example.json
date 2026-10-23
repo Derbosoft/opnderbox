@@ -1,0 +1,9 @@
+{
+  "opnsense": "https://192.168.1.1",
+  "opnsense_fingerprint": "empreinte SHA-256 du certificat d'OPNsense (64 caractères hexadécimaux)",
+  "password_hash": "généré par : sudo opnderbox password",
+  "port": 443,
+  "rollback_seconds": 60,
+  "hide_interfaces": [],
+  "rule_prefix": ""
+}

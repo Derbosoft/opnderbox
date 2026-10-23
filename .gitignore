@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+# configuration et secrets d'une installation locale
+config.json
+apikey.txt
+*.key
+*.crt
+*.pem
+/etat/

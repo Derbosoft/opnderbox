@@ -1,0 +1,18 @@
+# OPNderbox : docker compose up -d
+# Première configuration : docker compose logs opnderbox (ligne « Premiere configuration : ... »),
+# en remplaçant l'adresse affichée par celle de la machine qui fait tourner Docker.
+services:
+  opnderbox:
+    build: .
+    image: opnderbox:latest
+    container_name: opnderbox
+    restart: unless-stopped
+    ports:
+      - "8443:8443"
+    volumes:
+      - opnderbox-config:/etc/opnderbox
+      - opnderbox-data:/var/lib/opnderbox
+
+volumes:
+  opnderbox-config:
+  opnderbox-data:

@@ -1,0 +1,32 @@
+[Unit]
+Description=OPNderbox, console d'administration pour OPNsense
+Documentation=https://github.com/Derbosoft/opnderbox
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=opnderbox
+Group=opnderbox
+Environment=LANG=C.UTF-8
+EnvironmentFile=-/etc/default/opnderbox
+ExecStart=/usr/bin/python3 /opt/opnderbox/server.py
+Restart=on-failure
+RestartSec=5
+# port 443 sans les droits root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+ReadWritePaths=/etc/opnderbox /var/lib/opnderbox
+StateDirectory=opnderbox
+StateDirectoryMode=0700
+
+[Install]
+WantedBy=multi-user.target
