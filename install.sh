@@ -14,6 +14,7 @@ CONF=/etc/opnderbox
 STATE=/var/lib/opnderbox
 UNIT=/etc/systemd/system/opnderbox.service
 CLI=/usr/local/bin/opnderbox
+LINK=/usr/sbin/opnderbox      # « pct enter » de Proxmox ne met pas /usr/local/bin dans le PATH
 SRC=$(cd "$(dirname "$0")" && pwd)
 PORT=""
 ACTION=installer
@@ -33,7 +34,7 @@ done
 
 if [ "$ACTION" != installer ]; then
     systemctl disable --now opnderbox 2>/dev/null || true
-    rm -f "$UNIT" "$CLI"
+    rm -f "$UNIT" "$CLI" "$LINK"
     systemctl daemon-reload
     rm -rf "$PREFIX"
     if [ "$ACTION" = purger ]; then
@@ -90,7 +91,9 @@ cat > "$CLI" <<'EOF'
 # Commande d'administration d'OPNderbox.
 case "${1:-}" in
     setup)    exec runuser -u opnderbox -- python3 /opt/opnderbox/server.py setup ;;
-    password) runuser -u opnderbox -- python3 /opt/opnderbox/server.py password && systemctl restart opnderbox ;;
+    # saisie en root : le compte du service ne peut pas lire le terminal d'une console root
+    password) python3 /opt/opnderbox/server.py password && chown opnderbox:opnderbox /etc/opnderbox/config.json && systemctl restart opnderbox \
+                  && echo "Service redémarré : reconnectez-vous avec le nouveau mot de passe." ;;
     status)   exec systemctl status opnderbox ;;
     logs)     exec journalctl -u opnderbox -f ;;
     restart)  exec systemctl restart opnderbox ;;
@@ -101,6 +104,7 @@ case "${1:-}" in
 esac
 EOF
 chmod 755 "$CLI"
+ln -sf "$CLI" "$LINK"
 
 systemctl daemon-reload
 systemctl enable opnderbox >/dev/null 2>&1
