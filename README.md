@@ -1,4 +1,4 @@
-# OPNderbox
+# <img src="docs/logo.svg" width="40" alt="" align="top"> OPNderbox
 
 **Une console d'administration pour [OPNsense](https://opnsense.org) qui reprend l'ergonomie de Stormshield SNS** : bandeau MONITORING / CONFIGURATION, menu à gauche, grille de filtrage avec séparateurs et compteurs d'utilisation, édition des règles par onglets, objets réseau groupés par type, journaux avec panneau de détails… OPNderbox parle à OPNsense par son API ; il ne remplace pas son interface, il en offre une autre, en français, pensée pour l'exploitation au quotidien.
 
